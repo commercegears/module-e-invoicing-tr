@@ -1,0 +1,21 @@
+{
+    "name": "softaware/module-e-invoicing-tr",
+    "description": "Türkiye for Softaware E-Invoicing (Magento 2, beta): UBL-TR 1.2 e-Fatura / e-Arşiv through the Nilvera private integrator, VKN/TCKN and tax office at checkout.",
+    "type": "magento2-module",
+    "license": "proprietary",
+    "require": {
+        "php": "~8.2.0||~8.3.0||~8.4.0||~8.5.0",
+        "magento/framework": "~103.0.7",
+        "softaware/module-core": "^1.0",
+        "softaware/module-e-invoicing-core": "^1.0",
+        "magento/module-config": "*"
+    },
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "Softaware\\EInvoicingTr\\": ""
+        }
+    }
+}

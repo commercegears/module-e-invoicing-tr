@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="softaware_einvoicing">
+            <group id="tr" translate="label comment" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="0">
+                <label>Türkiye: e-Fatura / e-Arşiv (Nilvera)</label>
+                <comment><![CDATA[Beta. Needs your own contract with Nilvera (GİB private integrator). Buyers registered in GİB's e-Fatura list get an e-Fatura, all others an e-Arşiv invoice.]]></comment>
+                <field id="environment" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1">
+                    <label>Environment</label>
+                    <source_model>Softaware\EInvoicingTr\Model\Source\TrEnvironment</source_model>
+                </field>
+                <field id="api_key" translate="label" type="obscure" sortOrder="20" showInDefault="1" showInWebsite="1">
+                    <label>API Key</label>
+                    <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                </field>
+                <field id="series_prefix" translate="label comment" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>Invoice Series Prefix</label>
+                    <validate>validate-alphanum validate-length minimum-length-3 maximum-length-3</validate>
+                    <comment>3 letters/digits; the GİB number is prefix + year + 9 digits of the Magento invoice number.</comment>
+                </field>
+                <field id="einvoice_profile" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1">
+                    <label>e-Fatura Profile</label>
+                    <source_model>Softaware\EInvoicingTr\Model\Source\TrProfile</source_model>
+                </field>
+                <field id="test_connection" translate="label" sortOrder="50" showInDefault="1" showInWebsite="1">
+                    <label>Connection</label>
+                    <frontend_model>Softaware\EInvoicingTr\Block\Adminhtml\NilveraTestConnection</frontend_model>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

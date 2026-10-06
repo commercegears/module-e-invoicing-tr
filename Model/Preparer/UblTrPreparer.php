@@ -1,0 +1,53 @@
+<?php
+/**
+ * @copyright Copyright (c) Softaware Commerce (https://www.softawarecommerce.co.uk/)
+ */
+declare(strict_types=1);
+
+namespace Softaware\EInvoicingTr\Model\Preparer;
+
+use Softaware\EInvoicingCore\Api\InvoicePreparerInterface;
+use Softaware\EInvoicingCore\Model\Channel\ChannelPool;
+use Softaware\EInvoicingCore\Model\Config;
+use Softaware\EInvoicingCore\Model\Data\Invoice;
+use Softaware\EInvoicingCore\Model\Document;
+use Softaware\EInvoicingTr\Model\Channel\NilveraChannel;
+
+/**
+ * UBL-TR: ETTN (document UUID), GİB invoice number series, and the profile: buyers in GİB's e-Fatura list
+ * (checked through Nilvera) get an e-Fatura, all others an e-Arşiv invoice.
+ */
+class UblTrPreparer implements InvoicePreparerInterface
+{
+    public function __construct(
+        private readonly Config $config,
+        private readonly ChannelPool $channelPool
+    ) {
+    }
+
+    public function getFormats(): array
+    {
+        return ['ubl_tr'];
+    }
+
+    public function prepare(Invoice $invoice, Document $document, ?Document $original): void
+    {
+        $storeId = $document->getStoreId();
+        $invoice->extra['uuid'] = strtoupper($document->getUuid());
+        $invoice->extra['tr_prefix'] = $this->config->getValue('tr/series_prefix', $storeId) ?: 'MAG';
+        $invoice->seller->taxNumber = $invoice->seller->taxNumber ?: (preg_replace('/^TR/', '', $invoice->seller->vatId) ?? '');
+        $invoice->extra['tr_profile'] = 'EARSIVFATURA';
+        $channel = $this->channelPool->has($document->getChannel()) ? $this->channelPool->get($document->getChannel()) : null;
+        if ($channel instanceof NilveraChannel && $channel->isConfigured($storeId)) {
+            $taxId = $invoice->buyer->taxNumber ?: (preg_replace('/^TR/', '', $invoice->buyer->vatId) ?? '');
+            $alias = $channel->eInvoiceAlias($taxId, $storeId);
+            if ($alias !== '') {
+                $invoice->extra['tr_profile'] = $this->config->getValue('tr/einvoice_profile', $storeId) ?: 'TICARIFATURA';
+                $invoice->extra['tr_alias'] = $alias;
+            }
+        }
+        if ($original !== null) {
+            $invoice->extra['preceding_tr_number'] = $original->getExternalId() ?: $invoice->precedingInvoiceNumber;
+        }
+    }
+}

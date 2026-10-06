@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Softaware\EInvoicingCore\Model\Format\FormatPool">
+        <arguments>
+            <argument name="formats" xsi:type="array">
+                <item name="ubl_tr" xsi:type="object">Softaware\EInvoicingTr\Model\Format\UblTr</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Softaware\EInvoicingCore\Model\Channel\ChannelPool">
+        <arguments>
+            <argument name="channels" xsi:type="array">
+                <item name="tr_nilvera" xsi:type="object">Softaware\EInvoicingTr\Model\Channel\NilveraChannel</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Softaware\EInvoicingCore\Model\PreparerPool">
+        <arguments>
+            <argument name="preparers" xsi:type="array">
+                <item name="tr_ubl" xsi:type="object">Softaware\EInvoicingTr\Model\Preparer\UblTrPreparer</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Softaware\EInvoicingTr\Model\Preparer\UblTrPreparer">
+        <arguments>
+            <argument name="channelPool" xsi:type="object">Softaware\EInvoicingCore\Model\Channel\ChannelPool\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="Softaware\EInvoicingCore\Model\Buyer\FieldPool">
+        <arguments>
+            <argument name="fields" xsi:type="array">
+                <item name="tr_tax_id" xsi:type="object">Softaware\EInvoicingTr\Model\Buyer\TaxIdField</item>
+                <item name="tr_tax_office" xsi:type="object">Softaware\EInvoicingTr\Model\Buyer\TaxOfficeField</item>
+            </argument>
+        </arguments>
+    </type>
+    <virtualType name="Softaware\EInvoicingTr\Model\Buyer\TaxOfficeField" type="Softaware\EInvoicingCore\Model\Buyer\Field\TextField">
+        <arguments>
+            <argument name="code" xsi:type="string">tr_tax_office</argument>
+            <argument name="label" xsi:type="string">Tax office</argument>
+            <argument name="countries" xsi:type="array">
+                <item name="tr" xsi:type="string">TR</item>
+            </argument>
+            <argument name="mapsTo" xsi:type="string">tax_office</argument>
+            <argument name="maxLength" xsi:type="number">128</argument>
+            <argument name="sortOrder" xsi:type="number">45</argument>
+        </arguments>
+    </virtualType>
+    <type name="Softaware\EInvoicingCore\Model\RoutingDefaults">
+        <arguments>
+            <argument name="rules" xsi:type="array">
+                <item name="tr_seller" xsi:type="array">
+                    <item name="seller" xsi:type="string">TR</item>
+                    <item name="country" xsi:type="string">*</item>
+                    <item name="buyers" xsi:type="string">all</item>
+                    <item name="format" xsi:type="string">ubl_tr</item>
+                    <item name="channel" xsi:type="string">tr_nilvera</item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+    <virtualType name="Softaware\EInvoicingTr\Model\Source\TrEnvironment" type="Softaware\EInvoicingCore\Model\Source\Options">
+        <arguments>
+            <argument name="options" xsi:type="array">
+                <item name="test" xsi:type="string" translatable="true">Test (apitest.nilvera.com)</item>
+                <item name="live" xsi:type="string" translatable="true">Live</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Softaware\EInvoicingTr\Model\Source\TrProfile" type="Softaware\EInvoicingCore\Model\Source\Options">
+        <arguments>
+            <argument name="options" xsi:type="array">
+                <item name="TICARIFATURA" xsi:type="string" translatable="true">TICARIFATURA (commercial)</item>
+                <item name="TEMELFATURA" xsi:type="string" translatable="true">TEMELFATURA (basic)</item>
+            </argument>
+        </arguments>
+    </virtualType>
+</config>
