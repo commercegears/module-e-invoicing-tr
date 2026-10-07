@@ -24,3 +24,9 @@ Connection,Connection
 Live,Live
 "TICARIFATURA (commercial)","TICARIFATURA (commercial)"
 "TEMELFATURA (basic)","TEMELFATURA (basic)"
+"Test: Nilvera's test system, invoices are not reported to GİB. Live: legally binding invoices. The API key must belong to the same environment. Default: Test.","Test: Nilvera's test system, invoices are not reported to GİB. Live: legally binding invoices. The API key must belong to the same environment. Default: Test."
+"Where to find it:","Where to find it:"
+"create the API key in the Nilvera portal; for Test, use a key from Nilvera's test portal.","create the API key in the Nilvera portal; for Test, use a key from Nilvera's test portal."
+"Stored encrypted.","Stored encrypted."
+"3 letters/digits; the GİB number is prefix + year + 9 digits of the Magento invoice number. Default: MAG.","3 letters/digits; the GİB number is prefix + year + 9 digits of the Magento invoice number. Default: MAG."
+"TICARIFATURA lets the buyer accept or reject the invoice in GİB; TEMELFATURA does not. Default: TICARIFATURA.","TICARIFATURA lets the buyer accept or reject the invoice in GİB; TEMELFATURA does not. Default: TICARIFATURA."
