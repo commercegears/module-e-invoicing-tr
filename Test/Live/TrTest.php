@@ -68,5 +68,10 @@ check($n->checkStatus($tdoc)?->status === 'delivered', 'Nilvera: status succeed 
 $mock->queue = [new Response(409, [], '{}')];
 check($n->send($tdoc, $trXml, null, $inv)->externalStatus === 'duplicate', 'Nilvera: 409 duplicate → not sent twice');
 check(!str_contains($http->drainCalls(), 'nil_test_key_777'), 'Nilvera key masked');
+// Timeout after the upload: repeated with the same ETTN, Nilvera answers 409 → recorded once, not sent twice
+$mock->queue = [new \GuzzleHttp\Exception\ConnectException('cURL error 28: Operation timed out after 60001 milliseconds with 0 bytes received',
+    new \GuzzleHttp\Psr7\Request('POST', 'https://apitest.nilvera.com/earchive/Send/Xml'), null, ['errno' => 28]), new Response(409, [], '{}')];
+check($n->send($tdoc, $trXml, null, $inv)->externalStatus === 'duplicate', 'Nilvera: timeout → repeated with the same ETTN → 409 duplicate, not sent twice');
+$http->drainCalls();
 
 done();

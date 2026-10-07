@@ -86,7 +86,9 @@ class NilveraChannel extends AbstractChannel
         $url = $this->base($storeId) . ($isEArchive ? '/earchive/Send/Xml' : '/einvoice/Send/Xml?Alias='
             . rawurlencode((string)($invoice->extra['tr_alias'] ?? '')));
         $response = $this->http->request('POST', $url, $this->headers($storeId)
-            + ['Content-Type' => 'multipart/form-data; boundary=' . $boundary], $body, ['log_body' => false]);
+            + ['Content-Type' => 'multipart/form-data; boundary=' . $boundary], $body,
+            // Safe to repeat: Nilvera refuses a second invoice with the same ETTN (HTTP 409, handled below).
+            ['log_body' => false, 'idempotent' => true]);
         if ($response->status === 409) {
             return new SendResult(DocumentInterface::STATUS_SENT, $document->getUuid(), $isEArchive ? 'earchive' : 'einvoice',
                 'duplicate', (string)__('Nilvera already has this invoice (same ETTN); not sent twice.'));
