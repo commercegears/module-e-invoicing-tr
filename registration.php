@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright Copyright (c) CommerceGears (https://www.commercegearscommerce.co.uk/)
+ * @copyright Copyright (c) CommerceGears (https://commercegears.com/)
  */
 declare(strict_types=1);
 
