@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.1.0 - 2026-10-11
+
+### Changed
+- Settings in their own section "E-Invoicing: Türkiye (Nilvera)", listed in the "E-Invoicing" group of the Softaware tab, instead of a
+  group inside the E-Invoicing section. Saved values keep their configuration paths, nothing needs to be set again.
+  Requires softaware/module-e-invoicing-core ^1.2.
+
 ## 1.0.1 - 2026-10-07
 
 ### Changed

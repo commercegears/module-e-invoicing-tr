@@ -17,7 +17,7 @@ e-Fatura / e-Arşiv through the private integrator Nilvera.
 
 ## Configuration
 
-Stores > Configuration > Softaware > E-Invoicing > Türkiye (`softaware_einvoicing/tr/*`, website scope): environment
+Stores > Configuration > Softaware > E-Invoicing > E-Invoicing: Türkiye (Nilvera) (`softaware_einvoicing/tr/*`, website scope): environment
 (test / live), API key (encrypted), invoice series prefix, e-Fatura profile, Test Connection. Seller settings: tax
 number (VKN) and tax office.
 
