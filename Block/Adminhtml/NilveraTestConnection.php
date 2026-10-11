@@ -1,12 +1,12 @@
 <?php
 /**
- * @copyright Copyright (c) Softaware Commerce (https://www.softawarecommerce.co.uk/)
+ * @copyright Copyright (c) CommerceGears (https://www.commercegearscommerce.co.uk/)
  */
 declare(strict_types=1);
 
-namespace Softaware\EInvoicingTr\Block\Adminhtml;
+namespace CommerceGears\EInvoicingTr\Block\Adminhtml;
 
-use Softaware\EInvoicingCore\Block\Adminhtml\System\Config\TestConnection;
+use CommerceGears\EInvoicingCore\Block\Adminhtml\System\Config\TestConnection;
 
 class NilveraTestConnection extends TestConnection
 {

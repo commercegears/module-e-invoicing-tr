@@ -1,18 +1,18 @@
 <?php
 /**
- * @copyright Copyright (c) Softaware Commerce (https://www.softawarecommerce.co.uk/)
+ * @copyright Copyright (c) CommerceGears (https://www.commercegearscommerce.co.uk/)
  */
 declare(strict_types=1);
 
-namespace Softaware\EInvoicingTr\Model\Channel;
+namespace CommerceGears\EInvoicingTr\Model\Channel;
 
-use Softaware\EInvoicingCore\Api\Data\DocumentInterface;
-use Softaware\EInvoicingCore\Exception\ChannelException;
-use Softaware\EInvoicingCore\Model\Channel\AbstractChannel;
-use Softaware\EInvoicingCore\Model\Channel\SendResult;
-use Softaware\EInvoicingCore\Model\Data\Invoice;
-use Softaware\EInvoicingCore\Model\Document;
-use Softaware\EInvoicingTr\Model\Format\UblTr;
+use CommerceGears\EInvoicingCore\Api\Data\DocumentInterface;
+use CommerceGears\EInvoicingCore\Exception\ChannelException;
+use CommerceGears\EInvoicingCore\Model\Channel\AbstractChannel;
+use CommerceGears\EInvoicingCore\Model\Channel\SendResult;
+use CommerceGears\EInvoicingCore\Model\Data\Invoice;
+use CommerceGears\EInvoicingCore\Model\Document;
+use CommerceGears\EInvoicingTr\Model\Format\UblTr;
 
 /**
  * Türkiye: Nilvera private integrator (e-Fatura and e-Arşiv). The buyer's VKN/TCKN is checked in GİB's
@@ -80,7 +80,7 @@ class NilveraChannel extends AbstractChannel
     {
         $storeId = $document->getStoreId();
         $isEArchive = str_contains($xml, '<cbc:ProfileID>EARSIVFATURA</cbc:ProfileID>');
-        $boundary = 'softaware' . bin2hex(random_bytes(8));
+        $boundary = 'commercegears' . bin2hex(random_bytes(8));
         $body = '--' . $boundary . "\r\n" . 'Content-Disposition: form-data; name="file"; filename="' . $document->getUuid()
             . ".xml\"\r\nContent-Type: application/xml\r\n\r\n" . $xml . "\r\n--" . $boundary . "--\r\n";
         $url = $this->base($storeId) . ($isEArchive ? '/earchive/Send/Xml' : '/einvoice/Send/Xml?Alias='

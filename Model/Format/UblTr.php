@@ -1,18 +1,18 @@
 <?php
 /**
- * @copyright Copyright (c) Softaware Commerce (https://www.softawarecommerce.co.uk/)
+ * @copyright Copyright (c) CommerceGears (https://www.commercegearscommerce.co.uk/)
  */
 declare(strict_types=1);
 
-namespace Softaware\EInvoicingTr\Model\Format;
+namespace CommerceGears\EInvoicingTr\Model\Format;
 
-use Softaware\EInvoicingCore\Model\Data\Address;
-use Softaware\EInvoicingCore\Model\Data\Invoice;
-use Softaware\EInvoicingCore\Model\Data\Party;
-use Softaware\EInvoicingCore\Model\Data\VatCategory;
-use Softaware\EInvoicingCore\Model\Format\AbstractUbl;
-use Softaware\EInvoicingCore\Model\Format\FormatInterface;
-use Softaware\EInvoicingCore\Model\Format\Xml;
+use CommerceGears\EInvoicingCore\Model\Data\Address;
+use CommerceGears\EInvoicingCore\Model\Data\Invoice;
+use CommerceGears\EInvoicingCore\Model\Data\Party;
+use CommerceGears\EInvoicingCore\Model\Data\VatCategory;
+use CommerceGears\EInvoicingCore\Model\Format\AbstractUbl;
+use CommerceGears\EInvoicingCore\Model\Format\FormatInterface;
+use CommerceGears\EInvoicingCore\Model\Format\Xml;
 
 /**
  * Türkiye UBL-TR 1.2 (e-Fatura TEMELFATURA/TICARIFATURA or e-Arşiv EARSIVFATURA), unsigned: the private
@@ -56,7 +56,7 @@ class UblTr implements FormatInterface
 
     public function getSchemaFile(Invoice $invoice): string
     {
-        return 'Softaware_EInvoicingCore::ubl21/maindoc/UBL-Invoice-2.1.xsd';
+        return 'CommerceGears_EInvoicingCore::ubl21/maindoc/UBL-Invoice-2.1.xsd';
     }
 
     public function check(Invoice $invoice): array

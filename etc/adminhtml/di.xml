@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
-    <!-- Stores > Configuration: this section is listed in the "E-Invoicing" group of the Softaware tab (Softaware_Core). -->
-    <type name="Softaware\Core\ViewModel\ConfigSectionGroups">
+    <!-- Stores > Configuration: this section is listed in the "E-Invoicing" group of the CommerceGears tab (CommerceGears_Core). -->
+    <type name="CommerceGears\Core\ViewModel\ConfigSectionGroups">
         <arguments>
             <argument name="groups" xsi:type="array">
                 <item name="einvoicing" xsi:type="array">
                     <item name="sections" xsi:type="array">
-                        <item name="softaware_einvoicing_tr" xsi:type="string">softaware_einvoicing_tr</item>
+                        <item name="commercegears_einvoicing_tr" xsi:type="string">commercegears_einvoicing_tr</item>
                     </item>
                 </item>
             </argument>

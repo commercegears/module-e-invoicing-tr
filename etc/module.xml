@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Module/etc/module.xsd">
-    <module name="Softaware_EInvoicingTr">
+    <module name="CommerceGears_EInvoicingTr">
         <sequence>
-            <module name="Softaware_Core"/>
-            <module name="Softaware_EInvoicingCore"/>
+            <module name="CommerceGears_Core"/>
+            <module name="CommerceGears_EInvoicingCore"/>
         </sequence>
     </module>
 </config>

@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.0.0 (2026-10-11)
+- Improvement: renamed to CommerceGears (new Composer package, admin menu and settings paths)
+
 ## 1.1.0 (2026-10-11)
 - Improvement: settings have their own "E-Invoicing: Türkiye (Nilvera)" section; saved values are kept.
 

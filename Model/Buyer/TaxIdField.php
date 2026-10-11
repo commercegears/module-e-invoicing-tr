@@ -1,12 +1,12 @@
 <?php
 /**
- * @copyright Copyright (c) Softaware Commerce (https://www.softawarecommerce.co.uk/)
+ * @copyright Copyright (c) CommerceGears (https://www.commercegearscommerce.co.uk/)
  */
 declare(strict_types=1);
 
-namespace Softaware\EInvoicingTr\Model\Buyer;
+namespace CommerceGears\EInvoicingTr\Model\Buyer;
 
-use Softaware\EInvoicingCore\Model\Buyer\Field\TextField;
+use CommerceGears\EInvoicingCore\Model\Buyer\Field\TextField;
 
 /**
  * Turkish buyers: VKN (companies, 10 digits) or T.C. identity number (persons, 11 digits), with checksum.

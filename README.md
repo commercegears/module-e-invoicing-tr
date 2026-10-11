@@ -1,7 +1,7 @@
-# Softaware E-Invoicing: Türkiye (beta)
+# CommerceGears E-Invoicing: Türkiye (beta)
 
-`softaware/module-e-invoicing-tr` (Magento module `Softaware_EInvoicingTr`), requires
-`softaware/module-e-invoicing-core`.
+`commercegears/module-e-invoicing-tr` (Magento module `CommerceGears_EInvoicingTr`), requires
+`commercegears/module-e-invoicing-core`.
 
 e-Fatura / e-Arşiv through the private integrator Nilvera.
 
@@ -17,7 +17,7 @@ e-Fatura / e-Arşiv through the private integrator Nilvera.
 
 ## Configuration
 
-Stores > Configuration > Softaware > E-Invoicing > E-Invoicing: Türkiye (Nilvera) (`softaware_einvoicing/tr/*`, website scope): environment
+Stores > Configuration > CommerceGears > E-Invoicing > E-Invoicing: Türkiye (Nilvera) (`commercegears_einvoicing/tr/*`, website scope): environment
 (test / live), API key (encrypted), invoice series prefix, e-Fatura profile, Test Connection. Seller settings: tax
 number (VKN) and tax office.
 

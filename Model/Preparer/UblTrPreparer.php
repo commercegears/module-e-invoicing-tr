@@ -1,17 +1,17 @@
 <?php
 /**
- * @copyright Copyright (c) Softaware Commerce (https://www.softawarecommerce.co.uk/)
+ * @copyright Copyright (c) CommerceGears (https://www.commercegearscommerce.co.uk/)
  */
 declare(strict_types=1);
 
-namespace Softaware\EInvoicingTr\Model\Preparer;
+namespace CommerceGears\EInvoicingTr\Model\Preparer;
 
-use Softaware\EInvoicingCore\Api\InvoicePreparerInterface;
-use Softaware\EInvoicingCore\Model\Channel\ChannelPool;
-use Softaware\EInvoicingCore\Model\Config;
-use Softaware\EInvoicingCore\Model\Data\Invoice;
-use Softaware\EInvoicingCore\Model\Document;
-use Softaware\EInvoicingTr\Model\Channel\NilveraChannel;
+use CommerceGears\EInvoicingCore\Api\InvoicePreparerInterface;
+use CommerceGears\EInvoicingCore\Model\Channel\ChannelPool;
+use CommerceGears\EInvoicingCore\Model\Config;
+use CommerceGears\EInvoicingCore\Model\Data\Invoice;
+use CommerceGears\EInvoicingCore\Model\Document;
+use CommerceGears\EInvoicingTr\Model\Channel\NilveraChannel;
 
 /**
  * UBL-TR: ETTN (document UUID), GİB invoice number series, and the profile: buyers in GİB's e-Fatura list

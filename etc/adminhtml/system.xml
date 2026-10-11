@@ -1,47 +1,47 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
     <system>
-        <!-- Own section since 1.1.0 (listed in the E-Invoicing group); values keep their paths softaware_einvoicing/tr/*. -->
-        <section id="softaware_einvoicing_tr" translate="label" sortOrder="73" showInDefault="1" showInWebsite="1" showInStore="0">
+        <!-- Own section since 1.1.0 (listed in the E-Invoicing group); values keep their paths commercegears_einvoicing/tr/*. -->
+        <section id="commercegears_einvoicing_tr" translate="label" sortOrder="73" showInDefault="1" showInWebsite="1" showInStore="0">
             <label>E-Invoicing: Türkiye (Nilvera)</label>
-            <tab>softaware</tab>
-            <resource>Softaware_EInvoicingCore::config</resource>
+            <tab>commercegears</tab>
+            <resource>CommerceGears_EInvoicingCore::config</resource>
             <group id="tr" translate="label comment" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="0">
                 <label>Türkiye: e-Fatura / e-Arşiv (Nilvera)</label>
                 <attribute type="expanded">1</attribute>
                 <comment><![CDATA[Beta. Needs your own contract with Nilvera (GİB private integrator). Buyers registered in GİB's e-Fatura list get an e-Fatura, all others an e-Arşiv invoice.]]></comment>
                 <field id="environment" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" canRestore="1">
                     <label>Environment</label>
-                    <config_path>softaware_einvoicing/tr/environment</config_path>
-                    <source_model>Softaware\EInvoicingTr\Model\Source\TrEnvironment</source_model>
+                    <config_path>commercegears_einvoicing/tr/environment</config_path>
+                    <source_model>CommerceGears\EInvoicingTr\Model\Source\TrEnvironment</source_model>
                     <comment>Test: Nilvera's test system, invoices are not reported to GİB. Live: legally binding invoices. The API key must belong to the same environment. Default: Test.</comment>
                 </field>
                 <field id="help_api_key" translate="label comment" sortOrder="15" showInDefault="1" showInWebsite="1">
                     <label>Where to find it:</label>
-                    <frontend_model>Softaware\EInvoicingCore\Block\Adminhtml\System\Config\HelpBox</frontend_model>
+                    <frontend_model>CommerceGears\EInvoicingCore\Block\Adminhtml\System\Config\HelpBox</frontend_model>
                     <comment><![CDATA[create the API key in the Nilvera portal; for Test, use a key from Nilvera's test portal.]]></comment>
                 </field>
                 <field id="api_key" translate="label comment" type="obscure" sortOrder="20" showInDefault="1" showInWebsite="1">
                     <label>API Key</label>
-                    <config_path>softaware_einvoicing/tr/api_key</config_path>
+                    <config_path>commercegears_einvoicing/tr/api_key</config_path>
                     <comment>Stored encrypted.</comment>
                     <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
                 </field>
                 <field id="series_prefix" translate="label comment" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" canRestore="1">
                     <label>Invoice Series Prefix</label>
-                    <config_path>softaware_einvoicing/tr/series_prefix</config_path>
+                    <config_path>commercegears_einvoicing/tr/series_prefix</config_path>
                     <validate>validate-alphanum validate-length minimum-length-3 maximum-length-3</validate>
                     <comment>3 letters/digits; the GİB number is prefix + year + 9 digits of the Magento invoice number. Default: MAG.</comment>
                 </field>
                 <field id="einvoice_profile" translate="label comment" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" canRestore="1">
                     <label>e-Fatura Profile</label>
-                    <config_path>softaware_einvoicing/tr/einvoice_profile</config_path>
-                    <source_model>Softaware\EInvoicingTr\Model\Source\TrProfile</source_model>
+                    <config_path>commercegears_einvoicing/tr/einvoice_profile</config_path>
+                    <source_model>CommerceGears\EInvoicingTr\Model\Source\TrProfile</source_model>
                     <comment>TICARIFATURA lets the buyer accept or reject the invoice in GİB; TEMELFATURA does not. Default: TICARIFATURA.</comment>
                 </field>
                 <field id="test_connection" translate="label" sortOrder="50" showInDefault="1" showInWebsite="1">
                     <label>Connection</label>
-                    <frontend_model>Softaware\EInvoicingTr\Block\Adminhtml\NilveraTestConnection</frontend_model>
+                    <frontend_model>CommerceGears\EInvoicingTr\Block\Adminhtml\NilveraTestConnection</frontend_model>
                 </field>
             </group>
         </section>
