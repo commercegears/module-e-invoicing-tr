@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.1 (2026-10-13)
+- Fix: return invoices (IADE) refer to the GİB number of the original invoice instead of the Magento invoice number or the ETTN.
+- Improvement: product listing, FAQ and user guide.
+
 ## 2.0.0 (2026-10-11)
 - Improvement: renamed to CommerceGears (new Composer package, admin menu and settings paths)
 

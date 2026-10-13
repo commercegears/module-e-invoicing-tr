@@ -99,7 +99,9 @@ class UblTr implements FormatInterface
         $x->add($root, 'cbc:LineCountNumeric', (string)count($lines));
         if ($invoice->isCreditNote() && $invoice->precedingInvoiceNumber !== '') {
             $ref = $x->add($x->add($root, 'cac:BillingReference'), 'cac:InvoiceDocumentReference');
-            $x->add($ref, 'cbc:ID', (string)($invoice->extra['preceding_tr_number'] ?? $invoice->precedingInvoiceNumber));
+            // the GİB number of the original invoice (same series rule), not the Magento number or the ETTN
+            $x->add($ref, 'cbc:ID', (string)($invoice->extra['preceding_tr_number'] ?? $this->gibNumber($invoice,
+                $invoice->precedingInvoiceNumber, $invoice->precedingInvoiceDate ?: $invoice->issueDate)));
             $x->add($ref, 'cbc:IssueDate', $invoice->precedingInvoiceDate ?: $invoice->issueDate);
             $x->add($ref, 'cbc:DocumentTypeCode', 'IADE');
         }
@@ -261,8 +263,14 @@ class UblTr implements FormatInterface
 
     private function number(Invoice $invoice): string
     {
+        return $this->gibNumber($invoice, $invoice->number, $invoice->issueDate);
+    }
+
+    /** GİB invoice number: series prefix + year + the last 9 digits of the Magento number. */
+    private function gibNumber(Invoice $invoice, string $number, string $date): string
+    {
         $prefix = strtoupper((string)($invoice->extra['tr_prefix'] ?? 'MAG'));
-        $digits = preg_replace('/\D/', '', $invoice->number) ?? '';
-        return substr($prefix, 0, 3) . substr($invoice->issueDate, 0, 4) . str_pad(substr($digits, -9), 9, '0', STR_PAD_LEFT);
+        $digits = preg_replace('/\D/', '', $number) ?? '';
+        return substr($prefix, 0, 3) . substr($date, 0, 4) . str_pad(substr($digits, -9), 9, '0', STR_PAD_LEFT);
     }
 }

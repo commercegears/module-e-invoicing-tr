@@ -1,0 +1,111 @@
+{
+    "tagline": "UBL-TR 1.2 e-Arşiv and e-Fatura invoices and return invoices from your Magento invoices, with VKN / TCKN and tax office at checkout, checked locally and sent through the GİB private integrator Nilvera.",
+    "key_features": [
+        "UBL-TR 1.2 e-Fatura and e-Arşiv from Magento invoices",
+        "Return invoices (IADE) from credit memos",
+        "VKN or TCKN with checksum and tax office at checkout",
+        "GİB e-Fatura list check through Nilvera",
+        "ETTN, GİB number series and KDV breakdown",
+        "Checked against the UBL 2.1 schema before sending",
+        "Same ETTN never sent twice",
+        "Customer download in My Account on Luma and Hyvä"
+    ],
+    "benefits": [
+        {
+            "icon": "shield",
+            "title": "The right document for each buyer",
+            "text": "Buyers registered in GİB's e-Fatura list get an e-Fatura, everyone else an e-Arşiv invoice. The module checks the list through Nilvera before sending."
+        },
+        {
+            "icon": "users",
+            "title": "Tax IDs collected at checkout",
+            "text": "Turkish customers enter their VKN (companies, 10 digits) or T.C. identity number (persons, 11 digits), checked with the official checksum; companies add their tax office."
+        },
+        {
+            "icon": "clock",
+            "title": "Sent and tracked by cron",
+            "text": "Cron generates and validates each document, uploads it to Nilvera, polls the status and records every step in the audit trail."
+        }
+    ],
+    "showcase": [
+        {
+            "label": "Checkout",
+            "title": "VKN / TCKN and tax office",
+            "text": "For a Turkish billing address the checkout asks for the tax number (VKN) or T.C. identity number (TCKN), checked on the server with the checksum. Business buyers also enter their tax office."
+        },
+        {
+            "label": "Invoices",
+            "title": "UBL-TR 1.2 from every invoice",
+            "text": "Each Magento invoice becomes a UBL-TR document with ETTN, GİB invoice number (series prefix, year, 9 digits), seller and buyer tax IDs and tax offices, lines and the KDV breakdown."
+        },
+        {
+            "label": "Returns",
+            "title": "Credit memos become IADE invoices",
+            "text": "A credit memo becomes a return invoice (IADE) that refers to the GİB number and date of the original invoice."
+        },
+        {
+            "label": "Sending",
+            "title": "Through Nilvera, without duplicates",
+            "text": "Documents are uploaded to Nilvera's e-Fatura or e-Arşiv service with your API key. A repeated upload with the same ETTN is recognised, so an invoice is never sent twice."
+        },
+        {
+            "label": "Customer account",
+            "title": "UBL-TR download in My Account",
+            "text": "Logged-in customers download the XML of their invoices and return invoices under Electronic Invoices, on Luma and Hyvä."
+        }
+    ],
+    "feature_groups": [
+        {
+            "title": "Documents",
+            "items": [
+                "UBL-TR 1.2 (ubl_tr), unsigned: Nilvera signs",
+                "e-Arşiv (EARSIVFATURA), e-Fatura TICARIFATURA or TEMELFATURA",
+                "Return invoices (IADE) for credit memos",
+                "ETTN = document UUID, GİB number from series prefix + year + invoice number",
+                "UBL 2.1 schema and UBL-TR rules checked before sending"
+            ]
+        },
+        {
+            "title": "Nilvera connection",
+            "items": [
+                "Test (apitest.nilvera.com) and Live environments",
+                "GİB taxpayer check: e-Fatura alias or e-Arşiv",
+                "Upload to e-Fatura or e-Arşiv, status polling",
+                "API key stored encrypted, masked in the audit trail",
+                "Test Connection button and CLI"
+            ]
+        },
+        {
+            "title": "Checkout and orders",
+            "items": [
+                "VKN (10 digits) or TCKN (11 digits) with checksum",
+                "Tax office for business buyers",
+                "Optional order reference",
+                "Buyer details editable on the admin order page",
+                "Suggested rule: Turkish sellers send UBL-TR through Nilvera for all buyers"
+            ]
+        }
+    ],
+    "demo": {
+        "storefront": [
+            {
+                "label": "Checkout with VKN / TCKN and tax office (add a product, choose Türkiye)",
+                "url": "https://demo.commercegears.com/fusion-backpack.html"
+            },
+            {
+                "label": "My Account UBL-TR downloads (Luma, sign in as the demo customer)",
+                "url": "https://demo.commercegears.com/customer/account/login/"
+            },
+            {
+                "label": "My Account UBL-TR downloads (Hyvä, sign in as the demo customer)",
+                "url": "https://demo.commercegears.com/hyva/customer/account/login/"
+            }
+        ],
+        "admin": [
+            {
+                "label": "Admin panel (E-Invoicing: Türkiye)",
+                "url": "https://demo.commercegears.com/try-admin/e-invoicing-tr"
+            }
+        ]
+    }
+}

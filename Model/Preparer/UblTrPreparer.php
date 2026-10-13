@@ -46,8 +46,5 @@ class UblTrPreparer implements InvoicePreparerInterface
                 $invoice->extra['tr_alias'] = $alias;
             }
         }
-        if ($original !== null) {
-            $invoice->extra['preceding_tr_number'] = $original->getExternalId() ?: $invoice->precedingInvoiceNumber;
-        }
     }
 }
