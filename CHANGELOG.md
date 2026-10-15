@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.1.0 (2026-10-15)
+New: German translation of the customer-facing texts.
+
 ## 2.0.1 (2026-10-13)
 - Fix: return invoices (IADE) refer to the GİB number of the original invoice instead of the Magento invoice number or the ETTN.
 - Improvement: product listing, FAQ and user guide.
