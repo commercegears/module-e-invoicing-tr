@@ -14,16 +14,13 @@ queue, the admin grid, the document page, validation, the checkout fields and th
 - Admin demo: https://demo.commercegears.com/try-admin/e-invoicing-tr
 - Changelog: [CHANGELOG.md](../CHANGELOG.md) · Questions: [FAQ](faq.md)
 
-**About the demo.** The demo store has no Nilvera connection, and its own seller is a German company. Its Turkish
-documents were generated for a fictitious Turkish seller (VKN 1234567890, tax office Beşiktaş) with example tax numbers,
-and checked in the store against the UBL 2.1 schema and the UBL-TR rules. They are "Ready" with the delivery "Nilvera":
-nothing was sent. Without a connection the GİB e-Fatura list cannot be checked, so all demo documents are e-Arşiv
-invoices. Once Nilvera is connected for the same VKN, **Send** uploads them, buyers in the e-Fatura list get an
-e-Fatura, and cron records Nilvera's status (see section 7).
+**About the demo.** The demo store is connected to Nilvera's **test** system (nothing is reported to GİB as a real
+invoice). Its Turkish documents were sent for Nilvera's shared test company (VKN 1234567801, tax office Karesi): an
+e-Arşiv invoice to a private buyer, an e-Fatura to a company in GİB's e-Fatura list (GİB status 1300) and a return
+invoice that refers to the GİB number of its original. Each shows the GİB number Nilvera assigned and the ETTN.
 
-**Status: beta.** The Nilvera connection is built from Nilvera's published OpenAPI description and tested with
-recorded responses and the UBL 2.1 schema, not yet against Nilvera's test system. Test with a Nilvera test account
-before you go live.
+**Status: beta.** The Nilvera connection is tested end to end against Nilvera's test system (e-Arşiv, e-Fatura and
+return invoices). Test with your own Nilvera test account before you go live.
 
 ## 1. Requirements
 
@@ -61,7 +58,7 @@ job every 5 minutes.
 2. In **Seller (Your Company)** fill in your legal name, address, **Country = Türkiye**, your VKN in **Tax Number**
    and your **Tax Office** (vergi dairesi).
 3. **Stores > Configuration > CommerceGears > E-Invoicing: Türkiye (Nilvera)**: choose the **Environment** (Test first),
-   enter the **API Key**, check the **Invoice Series Prefix** and the **e-Fatura Profile**, save and click
+   enter the **API Key**, check the **e-Arşiv Series**, **e-Fatura Series** and the **e-Fatura Profile**, save and click
    **Test Connection**.
 4. Invoice an order of a Turkish customer. Cron generates the UBL-TR document, checks it and sends it through Nilvera.
 
@@ -74,8 +71,9 @@ default and website scope):
 | --- | --- |
 | Environment | **Test** (apitest.nilvera.com, default): Nilvera's test system, invoices are not reported to GİB. **Live**: legally binding invoices. The API key must belong to the same environment. |
 | API Key | Created in the Nilvera portal; for Test, a key from Nilvera's test portal. Stored encrypted. |
-| Invoice Series Prefix | 3 letters or digits (default `MAG`). The GİB number is the prefix, the year and 9 digits of the Magento invoice number. |
-| e-Fatura Profile | **TICARIFATURA** (default) lets the buyer accept or reject the invoice in GİB; **TEMELFATURA** does not. |
+| e-Arşiv Series | 3 capital letters or digits. The series must exist and be active in your Nilvera account; Nilvera gives each invoice the next GİB number of the series (e.g. `EAR2026000000001`), in GİB's date order. Empty (default): the default e-Arşiv series of your Nilvera account. |
+| e-Fatura Series | The same for e-Fatura invoices. Empty (default): the default e-Fatura series of your Nilvera account. |
+| e-Fatura Profile | **TICARIFATURA** (default) lets the buyer accept or reject the invoice in GİB; **TEMELFATURA** does not. Return invoices and invoices to public administrations are always TEMELFATURA (GİB rule). |
 | Connection | **Test Connection** calls Nilvera with the saved API key. |
 
 **E-Invoicing** (Core settings, section `commercegears_einvoicing`): **Enabled**, **Send Automatically** (default Yes:
@@ -101,25 +99,33 @@ consumers included (e-Arşiv invoices are needed for them too).
 - **Profile**: e-Fatura (TICARIFATURA or TEMELFATURA, from the setting) for buyers registered in GİB's e-Fatura list,
   otherwise e-Arşiv (EARSIVFATURA). The list is checked through Nilvera when the document is generated; without a
   Nilvera connection every document is e-Arşiv.
-- **ETTN** = the document's UUID; **GİB number** = series prefix + year + the last 9 digits of the Magento invoice
-  number.
+- **ETTN** = the document's UUID; **GİB number**: the XML carries the 3-character series and Nilvera assigns the
+  number (series + year + 9-digit sequence). The module stores it on the document: **GİB invoice number** on the
+  document page and in the customer account.
 - Seller and buyer with VKN or TCKN, name (or first and last name for persons), address and tax office; lines,
   shipping, the KDV breakdown and totals; payment due date for payment methods that are paid later.
-- **Return invoices (IADE)** for credit memos, referring to the GİB number and date of the original invoice.
+- **Return invoices (IADE)** for credit memos, referring to the GİB number and date of the original invoice (send the
+  original first). To e-Fatura buyers they are TEMELFATURA, as GİB does not accept a TICARIFATURA return invoice.
 - The document is unsigned: Nilvera signs it.
 
 **Checks before sending**: the UBL 2.1 schema (shipped) and the UBL-TR rules: the seller VKN (TR-SELLER) and tax office
-(TR-TAXOFFICE) are present and the invoice number has the GİB format (TR-ID). Problems are listed on the document page
+(TR-TAXOFFICE) are present, the series has 3 characters (TR-SERIES) and a return invoice's original has its GİB number
+(TR-REF). Problems are listed on the document page
 with the rule ID.
 
 ## 7. Sending through Nilvera
 
 1. Cron (or **Send** in the grid or on the document page) uploads the XML to Nilvera's e-Fatura service (with the
    buyer's alias) or e-Arşiv service, depending on the profile.
-2. Cron asks Nilvera for the status. A successful document becomes **Delivered**; an error reported by Nilvera marks it
-   **Rejected** with the message, so you can correct it, regenerate and send it again.
-3. If Nilvera already has a document with the same ETTN (for example after a timeout), the module records it as sent
-   instead of uploading it again, so an invoice is never sent twice.
+   Nilvera answers with the GİB number, which the module stores on the document.
+2. Cron asks Nilvera for the status until it is final:
+   - **e-Fatura**: **Sent** once GİB delivered it to the buyer (GİB code 1300); a TICARIFATURA becomes **Delivered**
+     when the buyer accepts it and **Rejected** when the buyer rejects it; a TEMELFATURA is **Delivered** at 1300.
+   - **e-Arşiv**: **Sent** once Nilvera has created and signed it, **Delivered** once it is in Nilvera's daily report
+     to GİB.
+   - An error reported by Nilvera or GİB marks the document **Rejected** with the message.
+3. If Nilvera already has a document with the same ETTN (for example after a timeout), the module reads its GİB number
+   and records it instead of uploading it again, so an invoice is never sent twice.
 
 The API key is masked in the audit trail. Documents of Nilvera's test environment are not reported to GİB.
 
@@ -129,14 +135,14 @@ The API key is masked in the audit trail. Documents of Nilvera's test environmen
 document, with search, filters and the mass actions **Generate / Regenerate (Not Sent Yet)**, **Send**, **Check
 Delivery Status**, **Cancel (Not Sent Yet)** and **Download Files (ZIP)**.
 
-**Document page**: status, Nilvera's reference, SHA-256 checksums of the files, the validation result and the audit
+**Document page**: status, Nilvera's status (e.g. `succeed:1300`), the **GİB invoice number**, the **UUID (ETTN)**, SHA-256 checksums of the files, the validation result and the audit
 trail with the API calls.
 
 **Order page**: the E-Invoicing box lists the order's documents, creates one by hand in any installed format and
 delivery, and edits the buyer details.
 
-**Customer account**: logged-in customers download the UBL-TR XML under **Electronic Invoices** on the Invoices and
-Refunds tabs of their orders, on Luma and Hyvä.
+**Customer account**: logged-in customers see the GİB invoice number and download the UBL-TR XML under **Electronic
+Invoices** on the Invoices and Refunds tabs of their orders, on Luma and Hyvä.
 
 ## 9. CLI
 
@@ -158,16 +164,21 @@ E-Invoicing: Türkiye (Nilvera) section).
 - **Documents stay "Ready"**: no Nilvera API key is set, or **Send Automatically** is No.
 - **"TR-SELLER: The seller VKN (10 digits) is missing"** or **"TR-TAXOFFICE"**: fill in Tax Number and Tax Office in
   Seller (Your Company) and regenerate.
-- **"TR-ID"**: set a 3-character Invoice Series Prefix.
+- **"TR-SERIES"**: set a 3-character e-Arşiv / e-Fatura Series, or mark a default series in your Nilvera account.
+- **Nilvera refuses the series (error 3009)**: the series does not exist or is not active in your Nilvera account.
+- **Nilvera refuses the date**: Nilvera numbers each series in date order; an invoice dated before the last invoice of
+  the series is refused. Send invoices on the day they are created.
+- **"TR-REF"**: the original invoice of a return invoice has no GİB number yet: send the original, then regenerate.
 - **Every document is e-Arşiv**: the taxpayer check needs a working Nilvera connection; check it with Test Connection.
 - **Test Connection fails**: the API key belongs to the other environment (test key with Test, live key with Live).
 
 ## 12. Limitations
 
-- Not yet tested against Nilvera's test system (beta, see above).
+- Tested against Nilvera's test system, not yet with a live account (beta, see above).
 - e-Arşiv internet-sale details (web address, payment and carrier data) and withholding (tevkifat) codes are not
   written yet.
-- The GİB number uses the Magento invoice number, which does not restart every year.
+- The customer downloads the XML the store sent (series only); the signed invoice with the GİB number is in the
+  Nilvera portal.
 
 ## 13. Uninstall
 

@@ -5,7 +5,7 @@
         "Return invoices (IADE) from credit memos",
         "VKN or TCKN with checksum and tax office at checkout",
         "GİB e-Fatura list check through Nilvera",
-        "ETTN, GİB number series and KDV breakdown",
+        "ETTN, GİB number from Nilvera and KDV breakdown",
         "Checked against the UBL 2.1 schema before sending",
         "Same ETTN never sent twice",
         "Customer download in My Account on Luma and Hyvä"
@@ -36,7 +36,7 @@
         {
             "label": "Invoices",
             "title": "UBL-TR 1.2 from every invoice",
-            "text": "Each Magento invoice becomes a UBL-TR document with ETTN, GİB invoice number (series prefix, year, 9 digits), seller and buyer tax IDs and tax offices, lines and the KDV breakdown."
+            "text": "Each Magento invoice becomes a UBL-TR document with ETTN, GİB invoice number assigned by Nilvera in your series, seller and buyer tax IDs and tax offices, lines and the KDV breakdown."
         },
         {
             "label": "Returns",
@@ -61,7 +61,7 @@
                 "UBL-TR 1.2 (ubl_tr), unsigned: Nilvera signs",
                 "e-Arşiv (EARSIVFATURA), e-Fatura TICARIFATURA or TEMELFATURA",
                 "Return invoices (IADE) for credit memos",
-                "ETTN = document UUID, GİB number from series prefix + year + invoice number",
+                "ETTN = document UUID, GİB number assigned by Nilvera in your e-Arşiv / e-Fatura series",
                 "UBL 2.1 schema and UBL-TR rules checked before sending"
             ]
         },
@@ -70,7 +70,7 @@
             "items": [
                 "Test (apitest.nilvera.com) and Live environments",
                 "GİB taxpayer check: e-Fatura alias or e-Arşiv",
-                "Upload to e-Fatura or e-Arşiv, status polling",
+                "Upload to e-Fatura or e-Arşiv, status polling until final (GİB 1300, buyer answer, e-Arşiv report)",
                 "API key stored encrypted, masked in the audit trail",
                 "Test Connection button and CLI"
             ]

@@ -16,8 +16,8 @@ use CommerceGears\EInvoicingCore\Model\Format\Xml;
 
 /**
  * Türkiye UBL-TR 1.2 (e-Fatura TEMELFATURA/TICARIFATURA or e-Arşiv EARSIVFATURA), unsigned: the private
- * integrator (e.g. Nilvera) signs and submits it to GİB. Beta: built from the GİB UBL-TR guide, checked with the
- * UBL 2.1 schema; not yet tested against an integrator.
+ * integrator (e.g. Nilvera) numbers, signs and submits it to GİB. Built from the GİB UBL-TR guide, checked with the
+ * UBL 2.1 schema and accepted by Nilvera's test system (e-Arşiv, e-Fatura and return invoices).
  */
 class UblTr implements FormatInterface
 {
@@ -68,7 +68,14 @@ class UblTr implements FormatInterface
         if ($invoice->seller->taxOffice === '') {
             $e[] = 'TR-TAXOFFICE: ' . __('The seller tax office (vergi dairesi) is missing.');
         }
-        if (!preg_match('/^[A-Z0-9]{3}\d{13}$/', $this->number($invoice))) {
+        if ($this->integratorNumbering($invoice)) {
+            if (!preg_match('/^[A-Z0-9]{3}$/', $this->number($invoice))) {
+                $e[] = 'TR-SERIES: ' . __('The invoice series must be 3 capital letters or digits and exist in your Nilvera account (set it in the Türkiye settings).');
+            }
+            if ($invoice->isCreditNote() && !empty($invoice->extra['preceding_tr_missing'])) {
+                $e[] = 'TR-REF: ' . __('The original invoice has no GİB number yet: send it to Nilvera first, then generate this return invoice again.');
+            }
+        } elseif (!preg_match('/^[A-Z0-9]{3}\d{13}$/', $this->number($invoice))) {
             $e[] = 'TR-ID: ' . __('The invoice number must have 3 letters/digits + year + 9 digits (set the series prefix).');
         }
         return $e;
@@ -100,7 +107,7 @@ class UblTr implements FormatInterface
         if ($invoice->isCreditNote() && $invoice->precedingInvoiceNumber !== '') {
             $ref = $x->add($x->add($root, 'cac:BillingReference'), 'cac:InvoiceDocumentReference');
             // the GİB number of the original invoice (same series rule), not the Magento number or the ETTN
-            $x->add($ref, 'cbc:ID', (string)($invoice->extra['preceding_tr_number'] ?? $this->gibNumber($invoice,
+            $x->add($ref, 'cbc:ID', (string)(($invoice->extra['preceding_tr_number'] ?? '') ?: $this->gibNumber($invoice,
                 $invoice->precedingInvoiceNumber, $invoice->precedingInvoiceDate ?: $invoice->issueDate)));
             $x->add($ref, 'cbc:IssueDate', $invoice->precedingInvoiceDate ?: $invoice->issueDate);
             $x->add($ref, 'cbc:DocumentTypeCode', 'IADE');
@@ -261,9 +268,24 @@ class UblTr implements FormatInterface
         return '';
     }
 
+    /**
+     * cbc:ID. Through an integrator that numbers invoices (Nilvera): only the 3-character series, the integrator adds
+     * year and sequence in GİB's date order and returns the GİB number. Otherwise: series + year + Magento number.
+     */
     private function number(Invoice $invoice): string
     {
+        if ((string)($invoice->extra['tr_number'] ?? '') !== '') {
+            return (string)$invoice->extra['tr_number'];
+        }
+        if ($this->integratorNumbering($invoice)) {
+            return strtoupper((string)$invoice->extra['tr_series']);
+        }
         return $this->gibNumber($invoice, $invoice->number, $invoice->issueDate);
+    }
+
+    private function integratorNumbering(Invoice $invoice): bool
+    {
+        return (string)($invoice->extra['tr_number'] ?? '') === '' && array_key_exists('tr_series', $invoice->extra);
     }
 
     /** GİB invoice number: series prefix + year + the last 9 digits of the Magento number. */

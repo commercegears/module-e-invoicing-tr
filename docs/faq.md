@@ -22,8 +22,9 @@ For a Turkish billing address the checkout asks for the tax number (VKN, 10 digi
 office.
 
 **How is the invoice number made?**
-Series prefix (3 characters, default MAG) + year + the last 9 digits of the Magento invoice number. The ETTN is the
-document's UUID.
+Nilvera assigns it: the store sends the 3-character series (from the settings, or your account's default series) and
+Nilvera adds the year and the next number in GİB's date order, e.g. EAR2026000000001. The module stores this GİB number
+and shows it on the document page and in the customer account. The ETTN is the document's UUID.
 
 **What happens with refunds?**
 Each credit memo becomes a return invoice (IADE) that refers to the GİB number and date of the original invoice.
@@ -33,9 +34,8 @@ No. If an upload times out and is repeated, Nilvera recognises the same ETTN and
 sent instead of creating a duplicate. A delivered document cannot be sent again or changed.
 
 **Why is the module marked beta?**
-The Nilvera connection is built from Nilvera's published API description and tested with recorded responses, not yet
-against Nilvera's test system. The documents are validated against the UBL 2.1 schema. Test with your Nilvera test
-account before going live.
+The Nilvera connection is tested end to end against Nilvera's test system (e-Arşiv, e-Fatura and return invoices),
+but not yet with a live account. Test with your Nilvera test account before going live.
 
 **Why are the documents in the demo not sent?**
 The demo store has no Nilvera connection. Its Turkish documents were generated for a fictitious Turkish seller and

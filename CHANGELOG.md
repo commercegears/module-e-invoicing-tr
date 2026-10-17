@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.2.0 (2026-10-17)
+- Fix: buyers in GİB's e-Fatura list are recognised again and get an e-Fatura, not an e-Arşiv invoice.
+- Fix: Nilvera numbers each invoice in your e-Arşiv or e-Fatura series, keeping GİB's date order.
+- Fix: e-Arşiv invoices no longer stay "sending"; statuses are followed until GİB's final answer.
+- Fix: return invoices to e-Fatura buyers are accepted by GİB and refer to the original's GİB number.
+- New: GİB invoice number in the admin and the customer account; separate e-Arşiv and e-Fatura series.
+
 ## 2.1.0 (2026-10-15)
 - New: German translation of the customer-facing texts.
 

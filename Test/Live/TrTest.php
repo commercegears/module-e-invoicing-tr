@@ -42,9 +42,10 @@ require $kit . '/mocks.php';
 // Nilvera (TR): taxpayer check, e-Fatura with alias, status
 $cfg->values = ['tr/api_key' => 'nil_test_key_777', 'tr/environment' => 'test'];
 $n = new \CommerceGears\EInvoicingTr\Model\Channel\NilveraChannel($cfg, $http);
-$mock->queue = [new Response(200, [], '[{"TaxNumber":"1234567890","Title":"TEST AŞ","DocumentType":"Invoice","Name":"urn:mail:defaultpk@test.com","Type":"PK"}]')];
+// GİB's list gives the taxpayer type (OZEL / KAMU) in "Type", not the mailbox type
+$mock->queue = [new Response(200, [], '[{"TaxNumber":"1234567890","Title":"TEST AŞ","DocumentType":"Invoice","Name":"urn:mail:defaultpk@test.com","Type":"OZEL"}]')];
 check($n->eInvoiceAlias('1234567890', 1) === 'urn:mail:defaultpk@test.com', 'Nilvera: registered taxpayer → e-Fatura alias');
-check(str_ends_with((string)end($mock->requests)->getUri(), '/general/GlobalCompany/Check/TaxNumber/1234567890'), 'Nilvera: GİB list check endpoint');
+check(str_contains((string)end($mock->requests)->getUri(), '/general/GlobalCompany/Check/TaxNumber/1234567890?globalUserType=Invoice'), 'Nilvera: GİB list check endpoint');
 $mock->queue = [new Response(200, [], '[]')];
 check($n->eInvoiceAlias('11111111110', 1) === '', 'Nilvera: not registered → e-Arşiv');
 // UBL-TR document from a TR test order (not saved): build model and check the format
@@ -62,15 +63,19 @@ $tdoc = om()->create(\CommerceGears\EInvoicingCore\Model\Document::class)->setDa
 $mock->queue = [new Response(200, [], '{"UUID":"f47ac10b-58cc-4372-a567-0e02b2c3d479","InvoiceNumber":"MAG2026000000123"}')];
 $r = $n->send($tdoc, $trXml, null, $inv);
 check((string)end($mock->requests)->getUri() === 'https://apitest.nilvera.com/earchive/Send/Xml' && $r->status === 'sending' && $r->externalRef === 'earchive', 'Nilvera: e-Arşiv XML upload');
-$tdoc->setData('external_id', 'f47ac10b-58cc-4372-a567-0e02b2c3d479')->setData('external_ref', 'earchive');
-$mock->queue = [new Response(200, [], '{"InvoiceStatus":{"Code":"succeed","Description":"Başarılı"}}')];
-check($n->checkStatus($tdoc)?->status === 'delivered', 'Nilvera: status succeed → delivered');
-$mock->queue = [new Response(409, [], '{}')];
+check($r->externalId === 'MAG2026000000123', 'Nilvera: GİB number stored as the network ID');
+$tdoc->setData('external_id', 'MAG2026000000123')->setData('external_ref', 'earchive')->setData('sent_at', '2026-10-17 10:00:00');
+$mock->queue = [new Response(200, [], '{"StatusCode":"succeed","ReportStatus":"Reported","StatusDetail":"Başarılı"}')];
+check($n->checkStatus($tdoc)?->status === 'delivered', 'Nilvera: e-Arşiv succeed + reported → delivered');
+$mock->queue = [new Response(200, [], '{"StatusCode":"waiting","ReportStatus":"NotReported"}')];
+check($n->checkStatus($tdoc)?->status === 'sending', 'Nilvera: e-Arşiv waiting → still sending');
+$mock->queue = [new Response(409, [], '{}'), new Response(200, [], '{"InvoiceNumber":"MAG2026000000123"}')];
 check($n->send($tdoc, $trXml, null, $inv)->externalStatus === 'duplicate', 'Nilvera: 409 duplicate → not sent twice');
 check(!str_contains($http->drainCalls(), 'nil_test_key_777'), 'Nilvera key masked');
 // Timeout after the upload: repeated with the same ETTN, Nilvera answers 409 → recorded once, not sent twice
 $mock->queue = [new \GuzzleHttp\Exception\ConnectException('cURL error 28: Operation timed out after 60001 milliseconds with 0 bytes received',
-    new \GuzzleHttp\Psr7\Request('POST', 'https://apitest.nilvera.com/earchive/Send/Xml'), null, ['errno' => 28]), new Response(409, [], '{}')];
+    new \GuzzleHttp\Psr7\Request('POST', 'https://apitest.nilvera.com/earchive/Send/Xml'), null, ['errno' => 28]), new Response(409, [], '{}'),
+    new Response(200, [], '{"InvoiceNumber":"MAG2026000000123"}')];
 check($n->send($tdoc, $trXml, null, $inv)->externalStatus === 'duplicate', 'Nilvera: timeout → repeated with the same ETTN → 409 duplicate, not sent twice');
 $http->drainCalls();
 

@@ -27,17 +27,23 @@
                     <comment>Stored encrypted.</comment>
                     <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
                 </field>
-                <field id="series_prefix" translate="label comment" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" canRestore="1">
-                    <label>Invoice Series Prefix</label>
-                    <config_path>commercegears_einvoicing/tr/series_prefix</config_path>
+                <field id="earchive_series" translate="label comment" type="text" sortOrder="30" showInDefault="1" showInWebsite="1">
+                    <label>e-Arşiv Series</label>
+                    <config_path>commercegears_einvoicing/tr/earchive_series</config_path>
                     <validate>validate-alphanum validate-length minimum-length-3 maximum-length-3</validate>
-                    <comment>3 letters/digits; the GİB number is prefix + year + 9 digits of the Magento invoice number. Default: MAG.</comment>
+                    <comment><![CDATA[3 capital letters or digits, e.g. EAR. The series must exist and be active in your Nilvera account (e-Arşiv &gt; Series): Nilvera gives each invoice the next GİB number of this series, e.g. EAR2026000000001. Empty: the default e-Arşiv series of your Nilvera account.]]></comment>
+                </field>
+                <field id="einvoice_series" translate="label comment" type="text" sortOrder="35" showInDefault="1" showInWebsite="1">
+                    <label>e-Fatura Series</label>
+                    <config_path>commercegears_einvoicing/tr/einvoice_series</config_path>
+                    <validate>validate-alphanum validate-length minimum-length-3 maximum-length-3</validate>
+                    <comment><![CDATA[3 capital letters or digits, e.g. EFT. Must exist and be active in your Nilvera account (e-Fatura &gt; Series). Empty: the default e-Fatura series of your Nilvera account.]]></comment>
                 </field>
                 <field id="einvoice_profile" translate="label comment" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" canRestore="1">
                     <label>e-Fatura Profile</label>
                     <config_path>commercegears_einvoicing/tr/einvoice_profile</config_path>
                     <source_model>CommerceGears\EInvoicingTr\Model\Source\TrProfile</source_model>
-                    <comment>TICARIFATURA lets the buyer accept or reject the invoice in GİB; TEMELFATURA does not. Default: TICARIFATURA.</comment>
+                    <comment>TICARIFATURA lets the buyer accept or reject the invoice in GİB; TEMELFATURA does not. Return invoices and invoices to public administrations are always TEMELFATURA (GİB rule). Default: TICARIFATURA.</comment>
                 </field>
                 <field id="test_connection" translate="label" sortOrder="50" showInDefault="1" showInWebsite="1">
                     <label>Connection</label>
