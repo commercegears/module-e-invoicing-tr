@@ -4,6 +4,8 @@
         <sequence>
             <module name="CommerceGears_Core"/>
             <module name="CommerceGears_EInvoicingCore"/>
+            <module name="Magento_Payment"/>
+            <module name="Magento_Sales"/>
         </sequence>
     </module>
 </config>

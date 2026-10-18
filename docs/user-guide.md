@@ -76,6 +76,22 @@ default and website scope):
 | e-Fatura Profile | **TICARIFATURA** (default) lets the buyer accept or reject the invoice in GİB; **TEMELFATURA** does not. Return invoices and invoices to public administrations are always TEMELFATURA (GİB rule). |
 | Connection | **Test Connection** calls Nilvera with the saved API key. |
 
+**Internet Sales** (GİB, VUK General Communiqué 509, IV.2.4.5: invoices of online sales must show these details):
+
+| Setting | What it does |
+| --- | --- |
+| This Store Sells Online | **Yes** (default): sales invoices (e-Arşiv and e-Fatura) carry the web address, payment type and date, the carrier (name and VKN/TCKN) and the shipment date. GİB also asks for a separate e-Arşiv series for internet sales. |
+| Web Address | The shop's address, e.g. `https://www.example.com.tr`. Empty: the store's base URL. |
+| Payment Types | GİB payment type per Magento payment method: KREDIKARTI/BANKAKARTI, EFT/HAVALE, KAPIDAODEME, ODEMEARACISI or DIGER, plus the payment intermediary (e.g. iyzico), optional. Defaults: bank transfer and check / money order = EFT/HAVALE, cash on delivery = KAPIDAODEME, PayPal = ODEMEARACISI, card gateways (Braintree, Stripe, iyzico, PayTR, Adyen) = KREDIKARTI/BANKAKARTI, others = DIGER with the method's name. The payment date is the date of the paid Magento invoice. |
+| Carriers | Carrier company and VKN/TCKN per Magento carrier code (e.g. `flatrate`) or per word of the tracking title or shipping method name (e.g. `yurtici`); `*` for all other shipments (e.g. your own delivery: your company and VKN). Yurtiçi, Aras, MNG and PTT are listed with their company names; enter their VKN as printed on their invoices to you (the module does not ship VKNs). |
+
+**Return Invoices (Credit Memos)** (please confirm with your accountant):
+
+| Setting | What it does |
+| --- | --- |
+| e-Fatura Buyers | **Issued by the buyer** (default): under GİB's UBL-TR rules the return invoice (IADE) is issued by the buyer who returns the goods, so the module sends nothing; the credit memo's document shows "Not sent (documented outside)" and you record the buyer's return invoice number and date there. A commercial invoice (TICARIFATURA) can also be rejected by the buyer within 8 days. **Issued by the store**: the module sends a return invoice (IADE, TEMELFATURA), as before 2.3.0. |
+| e-Arşiv Buyers (Consumers) | **No return invoice** (default): consumers cannot issue invoices. For internet sales the consumer fills in and signs the return section of the e-Arşiv invoice and sends it with the goods; it replaces the expense voucher (gider pusulası). Otherwise you issue an expense voucher (or an e-Gider Pusulası through your integrator). Record its number on the document. **e-Arşiv return invoice issued by the store**: the module sends an e-Arşiv invoice of type IADE, as before 2.3.0. |
+
 **E-Invoicing** (Core settings, section `commercegears_einvoicing`): **Enabled**, **Send Automatically** (default Yes:
 valid documents are sent by cron; No: send them from the grid), the seller details (**Tax Number** = VKN, **Tax
 Office**), the rules under **Countries, Formats and Delivery**, payment terms, **Ask for E-Invoice Details** at
@@ -104,13 +120,20 @@ consumers included (e-Arşiv invoices are needed for them too).
   document page and in the customer account.
 - Seller and buyer with VKN or TCKN, name (or first and last name for persons), address and tax office; lines,
   shipping, the KDV breakdown and totals; payment due date for payment methods that are paid later.
-- **Return invoices (IADE)** for credit memos, referring to the GİB number and date of the original invoice (send the
-  original first). To e-Fatura buyers they are TEMELFATURA, as GİB does not accept a TICARIFATURA return invoice.
+- **Internet sale details** (when the store sells online): e-Arşiv: the codes Nilvera reports to GİB (web address,
+  payment type, payment date, payment intermediary, carrier and its VKN/TCKN, shipment date); Nilvera prints them with
+  "Bu satış internet üzerinden yapılmıştır." and the return section. e-Fatura: the same details as invoice notes and the
+  shipment date in the delivery details. Both: the web address of the seller and the payment type.
+- **Return invoices (IADE)** for credit memos, only with "Issued by the store" (see Return Invoices), referring to the
+  GİB number and date of the original invoice (send the original first). To e-Fatura buyers they are TEMELFATURA, as GİB
+  does not accept a TICARIFATURA return invoice. Otherwise the credit memo's document is "Not sent (documented
+  outside)" and you record the document received (the buyer's return invoice or your expense voucher).
 - The document is unsigned: Nilvera signs it.
 
 **Checks before sending**: the UBL 2.1 schema (shipped) and the UBL-TR rules: the seller VKN (TR-SELLER) and tax office
 (TR-TAXOFFICE) are present, the series has 3 characters (TR-SERIES) and a return invoice's original has its GİB number
-(TR-REF). Problems are listed on the document page
+(TR-REF); for internet sales the web address (TR-WEB), the payment date for card, transfer and intermediary payments
+(TR-PAYDATE), the shipment (TR-SHIP) and the carrier with VKN/TCKN (TR-CARRIER). Problems are listed on the document page
 with the rule ID.
 
 ## 7. Sending through Nilvera
@@ -169,14 +192,16 @@ E-Invoicing: Türkiye (Nilvera) section).
 - **Nilvera refuses the date**: Nilvera numbers each series in date order; an invoice dated before the last invoice of
   the series is refused. Send invoices on the day they are created.
 - **"TR-REF"**: the original invoice of a return invoice has no GİB number yet: send the original, then regenerate.
+- **"TR-SHIP"**: the order is not shipped yet. Create the shipment: the invoice is generated again automatically.
+- **"TR-CARRIER"**: no Carriers row matches the shipment, or its VKN/TCKN is empty: add it under Internet Sales.
+- **"TR-PAYDATE"**: the Magento invoice is not paid yet (e.g. bank transfer invoiced before the money arrived).
 - **Every document is e-Arşiv**: the taxpayer check needs a working Nilvera connection; check it with Test Connection.
 - **Test Connection fails**: the API key belongs to the other environment (test key with Test, live key with Live).
 
 ## 12. Limitations
 
 - Tested against Nilvera's test system, not yet with a live account (beta, see above).
-- e-Arşiv internet-sale details (web address, payment and carrier data) and withholding (tevkifat) codes are not
-  written yet.
+- Withholding (tevkifat) codes are not written yet. The module does not create expense vouchers (e-Gider Pusulası).
 - The customer downloads the XML the store sent (series only); the signed invoice with the GİB number is in the
   Nilvera portal.
 

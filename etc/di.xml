@@ -75,4 +75,20 @@
             </argument>
         </arguments>
     </virtualType>
+    <virtualType name="CommerceGears\EInvoicingTr\Model\Source\TrReturnEInvoice" type="CommerceGears\EInvoicingCore\Model\Source\Options">
+        <arguments>
+            <argument name="options" xsi:type="array">
+                <item name="buyer" xsi:type="string" translatable="true">Issued by the buyer (recommended)</item>
+                <item name="store" xsi:type="string" translatable="true">Issued by the store (IADE, TEMELFATURA)</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="CommerceGears\EInvoicingTr\Model\Source\TrReturnEArchive" type="CommerceGears\EInvoicingCore\Model\Source\Options">
+        <arguments>
+            <argument name="options" xsi:type="array">
+                <item name="voucher" xsi:type="string" translatable="true">No return invoice: return section of the invoice or expense voucher (recommended)</item>
+                <item name="store" xsi:type="string" translatable="true">e-Arşiv return invoice issued by the store (IADE)</item>
+            </argument>
+        </arguments>
+    </virtualType>
 </config>

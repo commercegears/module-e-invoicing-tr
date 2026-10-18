@@ -2,7 +2,8 @@
     "tagline": "UBL-TR 1.2 e-Arşiv and e-Fatura invoices and return invoices from your Magento invoices, with VKN / TCKN and tax office at checkout, checked locally and sent through the GİB private integrator Nilvera.",
     "key_features": [
         "UBL-TR 1.2 e-Fatura and e-Arşiv from Magento invoices",
-        "Return invoices (IADE) from credit memos",
+        "Return invoices (IADE) or the buyer's return invoice recorded",
+        "Internet sale details: web address, payment, carrier, dates",
         "VKN or TCKN with checksum and tax office at checkout",
         "GİB e-Fatura list check through Nilvera",
         "ETTN, GİB number from Nilvera and KDV breakdown",
@@ -40,8 +41,8 @@
         },
         {
             "label": "Returns",
-            "title": "Credit memos become IADE invoices",
-            "text": "A credit memo becomes a return invoice (IADE) that refers to the GİB number and date of the original invoice."
+            "title": "Returns the GİB way",
+            "text": "By default the e-Fatura buyer issues the return invoice and consumer returns use the invoice's return section; you record that document. Or the module sends a return invoice (IADE) that refers to the original's GİB number."
         },
         {
             "label": "Sending",
@@ -60,7 +61,8 @@
             "items": [
                 "UBL-TR 1.2 (ubl_tr), unsigned: Nilvera signs",
                 "e-Arşiv (EARSIVFATURA), e-Fatura TICARIFATURA or TEMELFATURA",
-                "Return invoices (IADE) for credit memos",
+                "Return invoices (IADE) for credit memos, or the buyer's return invoice recorded",
+                "Internet sale details GİB requires (web address, payment type and date, carrier VKN, shipment date)",
                 "ETTN = document UUID, GİB number assigned by Nilvera in your e-Arşiv / e-Fatura series",
                 "UBL 2.1 schema and UBL-TR rules checked before sending"
             ]

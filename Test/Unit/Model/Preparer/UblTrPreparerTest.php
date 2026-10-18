@@ -12,23 +12,27 @@ use CommerceGears\EInvoicingCore\Model\Data\Invoice;
 use CommerceGears\EInvoicingCore\Model\Data\Party;
 use CommerceGears\EInvoicingCore\Model\Document;
 use CommerceGears\EInvoicingTr\Model\Channel\NilveraChannel;
+use CommerceGears\EInvoicingTr\Model\InternetSale;
 use CommerceGears\EInvoicingTr\Model\Preparer\UblTrPreparer;
 use PHPUnit\Framework\TestCase;
 
 class UblTrPreparerTest extends TestCase
 {
-    private function preparer(array $config, ?array $recipient, string $defaultSeries = '10X'): UblTrPreparer
+    private function preparer(array $config, ?array $recipient, string $defaultSeries = '10X', bool $configured = true): UblTrPreparer
     {
         $cfg = $this->createStub(Config::class);
         $cfg->method('getValue')->willReturnCallback(static fn (string $path) => (string)($config[$path] ?? ''));
         $channel = $this->createStub(NilveraChannel::class);
-        $channel->method('isConfigured')->willReturn(true);
+        $channel->method('isConfigured')->willReturn($configured);
         $channel->method('eInvoiceRecipient')->willReturn($recipient);
         $channel->method('defaultSeries')->willReturn($defaultSeries);
         $pool = $this->createStub(ChannelPool::class);
         $pool->method('has')->willReturn(true);
         $pool->method('get')->willReturn($channel);
-        return new UblTrPreparer($cfg, $pool);
+        $internet = $this->createStub(InternetSale::class);
+        $internet->method('isEnabled')->willReturn(($config['tr/internet_sale'] ?? '1') !== '0');
+        $internet->method('collect')->willReturn(['website' => 'https://shop.example.com.tr', 'payment_type' => InternetSale::CARD]);
+        return new UblTrPreparer($cfg, $pool, $internet);
     }
 
     private function document(array $data = []): Document
@@ -63,13 +67,66 @@ class UblTrPreparerTest extends TestCase
         self::assertSame('TEMELFATURA', $invoice->extra['tr_profile']);
     }
 
-    public function testReturnInvoiceToEFaturaBuyerIsBasicInvoice(): void
+    public function testReturnInvoiceToEFaturaBuyerIsBasicInvoiceWhenIssuedByStore(): void
     {
         $invoice = $this->invoice('1234567801');
         $invoice->typeCode = Invoice::TYPE_CREDIT_NOTE;
-        $this->preparer(['tr/einvoice_profile' => 'TICARIFATURA'], ['alias' => 'urn:mail:defaultpk@nilvera.com', 'type' => 'OZEL'])
-            ->prepare($invoice, $this->document(), null);
+        $this->preparer(['tr/einvoice_profile' => 'TICARIFATURA', 'tr/return_einvoice' => 'store'],
+            ['alias' => 'urn:mail:defaultpk@nilvera.com', 'type' => 'OZEL'])->prepare($invoice, $this->document(), null);
         self::assertSame('TEMELFATURA', $invoice->extra['tr_profile'], 'GİB: IADE only with TEMELFATURA');
+        self::assertArrayNotHasKey(Invoice::EXTRA_NOT_SENT, $invoice->extra);
+    }
+
+    /** Default: the e-Fatura buyer issues the return invoice (UBL-TR code list: IADE is issued by the buyer). */
+    public function testReturnToEFaturaBuyerIsNotSentByDefault(): void
+    {
+        $invoice = $this->invoice('1234567801');
+        $invoice->typeCode = Invoice::TYPE_CREDIT_NOTE;
+        $this->preparer([], ['alias' => 'urn:mail:defaultpk@nilvera.com', 'type' => 'OZEL'])->prepare($invoice, $this->document(), null);
+        self::assertSame('issued_by_buyer', $invoice->extra[Invoice::EXTRA_NOT_SENT_CODE]);
+        self::assertStringContainsString('buyer issues the return invoice', $invoice->extra[Invoice::EXTRA_NOT_SENT]);
+        self::assertArrayNotHasKey('tr_series', $invoice->extra);
+    }
+
+    /** Default: consumer returns are documented with the return section / expense voucher (VUK 509 IV.2.4.5). */
+    public function testConsumerReturnIsNotSentByDefault(): void
+    {
+        $invoice = $this->invoice('10000000146');
+        $invoice->typeCode = Invoice::TYPE_CREDIT_NOTE;
+        $this->preparer([], null)->prepare($invoice, $this->document(), null);
+        self::assertSame('return_voucher', $invoice->extra[Invoice::EXTRA_NOT_SENT_CODE]);
+        $invoice = $this->invoice('10000000146');
+        $invoice->typeCode = Invoice::TYPE_CREDIT_NOTE;
+        $this->preparer(['tr/return_earchive' => 'store'], null)->prepare($invoice, $this->document(), null);
+        self::assertArrayNotHasKey(Invoice::EXTRA_NOT_SENT, $invoice->extra);
+        self::assertSame('EARSIVFATURA', $invoice->extra['tr_profile']);
+    }
+
+    /** Without the Nilvera key the buyer type is unknown: decided only when both settings give the same answer. */
+    public function testReturnWithoutNilveraKey(): void
+    {
+        $invoice = $this->invoice('1234567801');
+        $invoice->typeCode = Invoice::TYPE_CREDIT_NOTE;
+        $this->preparer([], null, '', false)->prepare($invoice, $this->document(), null);
+        self::assertSame('return_voucher', $invoice->extra[Invoice::EXTRA_NOT_SENT_CODE] ?? '');
+        $invoice = $this->invoice('1234567801');
+        $invoice->typeCode = Invoice::TYPE_CREDIT_NOTE;
+        $this->preparer(['tr/return_einvoice' => 'store'], null, '', false)->prepare($invoice, $this->document(), null);
+        self::assertArrayNotHasKey(Invoice::EXTRA_NOT_SENT, $invoice->extra);
+    }
+
+    public function testInternetSaleDetailsOnSalesInvoicesOnly(): void
+    {
+        $invoice = $this->invoice('10000000146');
+        $this->preparer([], null)->prepare($invoice, $this->document(), null);
+        self::assertSame(InternetSale::CARD, $invoice->extra['tr_internet']['payment_type']);
+        $invoice = $this->invoice('10000000146');
+        $this->preparer(['tr/internet_sale' => '0'], null)->prepare($invoice, $this->document(), null);
+        self::assertArrayNotHasKey('tr_internet', $invoice->extra);
+        $invoice = $this->invoice('10000000146');
+        $invoice->typeCode = Invoice::TYPE_CREDIT_NOTE;
+        $this->preparer(['tr/return_earchive' => 'store'], null)->prepare($invoice, $this->document(), null);
+        self::assertArrayNotHasKey('tr_internet', $invoice->extra);
     }
 
     public function testConsumerGetsEArchiveInDefaultSeries(): void

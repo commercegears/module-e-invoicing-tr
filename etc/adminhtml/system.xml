@@ -50,6 +50,55 @@
                     <frontend_model>CommerceGears\EInvoicingTr\Block\Adminhtml\NilveraTestConnection</frontend_model>
                 </field>
             </group>
+            <group id="internet" translate="label comment" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="0">
+                <label>Internet Sales</label>
+                <comment><![CDATA[GİB requires on invoices of online sales (VUK General Communiqué 509, IV.2.4.5): the web address, payment method and date, the carrier (name and VKN/TCKN) and the shipment date, plus the sentence "Bu satış internet üzerinden yapılmıştır.". An invoice created before the order is shipped waits: it is generated again automatically when you create the shipment.]]></comment>
+                <field id="internet_sale" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>This Store Sells Online</label>
+                    <config_path>commercegears_einvoicing/tr/internet_sale</config_path>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Adds the internet sale details to e-Arşiv and e-Fatura sales invoices. GİB also asks for a separate e-Arşiv series for internet sales: set the e-Arşiv Series above. Default: Yes.</comment>
+                </field>
+                <field id="website_url" translate="label comment" type="text" sortOrder="20" showInDefault="1" showInWebsite="1">
+                    <label>Web Address</label>
+                    <config_path>commercegears_einvoicing/tr/website_url</config_path>
+                    <validate>validate-url</validate>
+                    <comment>Web address of the shop where the sale was made, e.g. https://www.example.com.tr. Empty: the store's base URL.</comment>
+                    <depends><field id="internet_sale">1</field></depends>
+                </field>
+                <field id="payment_types" translate="label comment" sortOrder="30" showInDefault="1" showInWebsite="1">
+                    <label>Payment Types</label>
+                    <config_path>commercegears_einvoicing/tr/payment_types</config_path>
+                    <frontend_model>CommerceGears\EInvoicingTr\Block\Adminhtml\System\Config\PaymentTypes</frontend_model>
+                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                    <comment><![CDATA[Only needed for methods not covered by the defaults: bank transfer and check / money order = EFT/HAVALE, cash on delivery = KAPIDAODEME, PayPal = ODEMEARACISI, card gateways (Braintree, Stripe, iyzico, PayTR, Adyen) = KREDIKARTI/BANKAKARTI, all others = DIGER with the method's name. Payment intermediary: the payment platform that collects the money (e.g. iyzico), optional. The payment date is the date of the paid Magento invoice.]]></comment>
+                    <depends><field id="internet_sale">1</field></depends>
+                </field>
+                <field id="carriers" translate="label comment" sortOrder="40" showInDefault="1" showInWebsite="1">
+                    <label>Carriers</label>
+                    <config_path>commercegears_einvoicing/tr/carriers</config_path>
+                    <frontend_model>CommerceGears\EInvoicingTr\Block\Adminhtml\System\Config\Carriers</frontend_model>
+                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                    <comment><![CDATA[First column: a Magento carrier code (e.g. flatrate, tablerate, ups) or a word of the tracking title or shipping method name (e.g. yurtici, aras); * = all other shipments, e.g. your own delivery with your company name and VKN. Enter each carrier's VKN as printed on its invoices to you: the module does not ship VKNs. Virtual and downloadable orders need no carrier.]]></comment>
+                    <depends><field id="internet_sale">1</field></depends>
+                </field>
+            </group>
+            <group id="returns" translate="label comment" sortOrder="120" showInDefault="1" showInWebsite="1" showInStore="0">
+                <label>Return Invoices (Credit Memos)</label>
+                <comment><![CDATA[What happens with a credit memo. A credit memo that is not sent shows as "Not sent (documented outside)" in Sales &gt; E-Invoices, where you record the number and date of the document that replaces it. Please confirm the setting with your accountant.]]></comment>
+                <field id="return_einvoice" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>e-Fatura Buyers</label>
+                    <config_path>commercegears_einvoicing/tr/return_einvoice</config_path>
+                    <source_model>CommerceGears\EInvoicingTr\Model\Source\TrReturnEInvoice</source_model>
+                    <comment><![CDATA[Issued by the buyer: under GİB's UBL-TR rules a return invoice (IADE) is issued by the buyer who returns the goods; the store sends nothing and records the buyer's invoice. A commercial invoice (TICARIFATURA) can also be rejected by the buyer within 8 days. Issued by the store: the module sends a return invoice (IADE, TEMELFATURA) to the buyer, as before 2.3.0. Default: Issued by the buyer.]]></comment>
+                </field>
+                <field id="return_earchive" translate="label comment" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>e-Arşiv Buyers (Consumers)</label>
+                    <config_path>commercegears_einvoicing/tr/return_earchive</config_path>
+                    <source_model>CommerceGears\EInvoicingTr\Model\Source\TrReturnEArchive</source_model>
+                    <comment><![CDATA[Consumers cannot issue invoices. For internet sales the consumer fills in and signs the return section of the e-Arşiv invoice and sends it with the goods: it replaces the expense voucher (gider pusulası) (VUK 509, IV.2.4.5); otherwise you issue an expense voucher (or an e-Gider Pusulası through your integrator). Business buyers outside e-Fatura issue their own return invoice. e-Arşiv return invoice issued by the store: the module sends an e-Arşiv invoice of type IADE, as before 2.3.0. Default: No return invoice.]]></comment>
+                </field>
+            </group>
         </section>
     </system>
 </config>

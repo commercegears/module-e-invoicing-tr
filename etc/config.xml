@@ -7,6 +7,11 @@
                 <api_key backend_model="Magento\Config\Model\Config\Backend\Encrypted"/>
                 <series_prefix>MAG</series_prefix>
                 <einvoice_profile>TICARIFATURA</einvoice_profile>
+                <internet_sale>1</internet_sale>
+                <!-- Common Turkish carriers, VKN left empty on purpose: enter the VKN printed on the carrier's invoices. -->
+                <carriers><![CDATA[{"_tr_yurtici": {"match": "yurtici", "name": "Yurtiçi Kargo Servisi A.Ş.", "tax_id": ""}, "_tr_aras": {"match": "aras", "name": "Aras Kargo Yurtiçi Yurtdışı Taşımacılık A.Ş.", "tax_id": ""}, "_tr_mng": {"match": "mng", "name": "MNG Kargo Yurtiçi ve Yurtdışı Taşımacılık A.Ş.", "tax_id": ""}, "_tr_ptt": {"match": "ptt", "name": "Posta ve Telgraf Teşkilatı A.Ş.", "tax_id": ""}}]]></carriers>
+                <return_einvoice>buyer</return_einvoice>
+                <return_earchive>voucher</return_earchive>
             </tr>
         </commercegears_einvoicing>
     </default>

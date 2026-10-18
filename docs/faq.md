@@ -27,7 +27,15 @@ Nilvera adds the year and the next number in GİB's date order, e.g. EAR20260000
 and shows it on the document page and in the customer account. The ETTN is the document's UUID.
 
 **What happens with refunds?**
-Each credit memo becomes a return invoice (IADE) that refers to the GİB number and date of the original invoice.
+By default the module follows GİB practice: an e-Fatura buyer issues the return invoice (IADE) to you, and a consumer
+signs the return section of the internet sale invoice (or you issue an expense voucher). The credit memo's document then
+shows "Not sent (documented outside)" and you record that document's number and date. If you prefer, the settings
+"Return Invoices" make the module send a return invoice (IADE) that refers to the GİB number of the original invoice.
+Please confirm the setting with your accountant.
+
+**Does it add the internet sale details GİB requires?**
+Yes. For online sales the invoices carry the web address, payment type and date, the carrier with its VKN/TCKN and the
+shipment date. Set your carriers' VKNs once; an invoice made before the shipment is generated again when you ship.
 
 **Can an invoice be sent twice?**
 No. If an upload times out and is repeated, Nilvera recognises the same ETTN and the module records the document as

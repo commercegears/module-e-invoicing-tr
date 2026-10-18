@@ -16,6 +16,22 @@ e-Fatura / e-Arşiv through the private integrator Nilvera.
   upload to e-Fatura or e-Arşiv, status polling until final (e-Fatura: GİB envelope status, e.g. 1300, and the buyer's
   answer to a TICARIFATURA; e-Arşiv: created, reported to GİB), duplicate protection (same ETTN is not sent twice).
   Tested end to end against Nilvera's test system (apitest.nilvera.com).
+- **Internet sales** (setting "This Store Sells Online", default Yes; VUK General Communiqué 509, IV.2.4.5): web address
+  (store base URL or a set address), GİB payment type (KREDIKARTI/BANKAKARTI, EFT/HAVALE, KAPIDAODEME, ODEMEARACISI,
+  DIGER) per Magento payment method with optional payment intermediary, payment date (date of the paid Magento invoice),
+  carrier company and VKN/TCKN (rows by Magento carrier code or a word of the tracking title, `*` for all others) and
+  shipment date (services: invoice date). e-Arşiv: written as Nilvera's `AdditionalDocumentReference` codes
+  (IS_INTERNET, INT_WEBSITE, INT_PAYMENT_METHOD, INT_PAYMENTDATE, INT_PAYMENT_AGENT_NAME, INT_TRANSPORTER,
+  INT_TRANSPORTER_REGISTER_NUMBER, INT_TRANSPORT_DATE), which Nilvera reports to GİB; e-Fatura: invoice notes plus
+  `Delivery/Despatch/ActualDespatchDate`; both: supplier `WebsiteURI` and `PaymentMeans`. Missing data stops the
+  invoice (checks TR-WEB, TR-PAYDATE, TR-SHIP, TR-CARRIER); an invoice made before the shipment is generated again
+  automatically when the shipment is saved.
+- **Returns** (credit memos), settings "Return Invoices": e-Fatura buyers - "Issued by the buyer" (default; GİB UBL-TR:
+  IADE is issued by the buyer, nothing is sent, the admin records the buyer's return invoice) or "Issued by the store"
+  (IADE, TEMELFATURA); e-Arşiv buyers - "No return invoice" (default; the signed return section of the internet sale
+  invoice replaces the expense voucher, VUK 509 IV.2.4.5) or "e-Arşiv return invoice issued by the store" (IADE).
+  Documents not sent get the status "Not sent (documented outside)" (EInvoicingCore 2.3.0) with a form to record the
+  received document's number and date.
 - Checkout / order fields for Turkish buyers: VKN (10 digits) or TCKN (11 digits) with checksum, tax office.
 - Suggested rule: Turkish sellers → UBL-TR through Nilvera for all buyers.
 
@@ -23,7 +39,8 @@ e-Fatura / e-Arşiv through the private integrator Nilvera.
 
 Stores > Configuration > CommerceGears > E-Invoicing > E-Invoicing: Türkiye (Nilvera) (`commercegears_einvoicing/tr/*`, website scope): environment
 (test / live), API key (encrypted), e-Arşiv series and e-Fatura series (empty = the default series of the Nilvera
-account; a series must exist in the Nilvera account), e-Fatura profile, Test Connection. Seller settings: tax
+account; a series must exist in the Nilvera account), e-Fatura profile, Test Connection; Internet Sales (this store sells online, web address, payment types, carriers);
+Return Invoices (e-Fatura buyers, e-Arşiv buyers). Seller settings: tax
 number (VKN) and tax office.
 
 ## What you need
@@ -33,8 +50,9 @@ A contract with Nilvera (API key; their test portal for trying it out).
 ## Limitations (beta)
 
 - Tested against Nilvera's test system (e-Arşiv, e-Fatura, return invoices); not yet used with a live account.
-- e-Arşiv internet-sale details (web address, payment and carrier data) and withholding (tevkifat) codes are not
-  written yet.
+- Withholding (tevkifat) codes are not written yet. Carrier VKNs are not shipped with the module: enter them.
+- e-Gider Pusulası (electronic expense voucher) is not created by the module; record its number on the credit memo's
+  document.
 - The customer downloads the XML the store sent (series only); the signed invoice with the GİB number is in the
   Nilvera portal.
 - Documents without Nilvera (no channel) keep the old number: prefix (default MAG) + year + Magento invoice number.

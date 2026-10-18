@@ -17,7 +17,9 @@ foreach ([dirname(__DIR__, 3) . '/EInvoicingCore/Test/Live', dirname(__DIR__, 3)
 require $kit . '/bootstrap.php';
 $writer = om()->get(\Magento\Framework\App\Config\Storage\WriterInterface::class);
 $paths = ['seller/vat_id' => '', 'seller/tax_number' => '1234567890', 'seller/tax_office' => 'Test Vergi Dairesi', 'seller/legal_name' => 'Test Satıcı A.Ş.',
-    'seller/street' => 'Test Cad. 1', 'seller/postcode' => '34000', 'seller/city' => 'İstanbul', 'seller/country_id' => 'TR', 'seller/endpoint_scheme' => '', 'seller/endpoint_id' => ''];
+    'seller/street' => 'Test Cad. 1', 'seller/postcode' => '34000', 'seller/city' => 'İstanbul', 'seller/country_id' => 'TR', 'seller/endpoint_scheme' => '', 'seller/endpoint_id' => '',
+    // unshipped test order: the internet sale details are tested in TrNilveraE2eTest and the unit tests
+    'tr/internet_sale' => '0'];
 foreach ($paths as $p => $v) { $writer->save('commercegears_einvoicing/' . $p, $v, 'stores', 2); }
 om()->get(\Magento\Framework\App\Config\ReinitableConfigInterface::class)->reinit();
 try {

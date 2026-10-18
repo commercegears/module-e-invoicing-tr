@@ -7,8 +7,11 @@
         "php": "~8.2.0||~8.3.0||~8.4.0||~8.5.0",
         "magento/framework": "~103.0.7",
         "commercegears/module-core": "^2.0",
-        "commercegears/module-e-invoicing-core": "^2.2",
-        "magento/module-config": "*"
+        "commercegears/module-e-invoicing-core": "^2.3",
+        "magento/module-config": "*",
+        "magento/module-payment": "*",
+        "magento/module-sales": "*",
+        "magento/module-store": "*"
     },
     "autoload": {
         "files": [

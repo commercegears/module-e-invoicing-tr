@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.3.0 (2026-10-18)
+- New: internet sale details GİB requires: web address, payment type and date, carrier and shipment date.
+- New: settings for payment types per payment method and for carriers with their VKN.
+- New: invoices made before the shipment are generated again automatically once the order is shipped.
+- New: return settings: e-Fatura buyers issue the return invoice themselves, you record its number.
+- New: consumer returns are documented with the invoice's return section or an expense voucher by default.
+
 ## 2.2.0 (2026-10-17)
 - Fix: buyers in GİB's e-Fatura list are recognised again and get an e-Fatura, not an e-Arşiv invoice.
 - Fix: Nilvera numbers each invoice in your e-Arşiv or e-Fatura series, keeping GİB's date order.
