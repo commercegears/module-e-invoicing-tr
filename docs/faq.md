@@ -45,13 +45,16 @@ sent instead of creating a duplicate. A delivered document cannot be sent again 
 The Nilvera connection is tested end to end against Nilvera's test system (e-Arşiv, e-Fatura and return invoices),
 but not yet with a live account. Test with your Nilvera test account before going live.
 
-**Why are the documents in the demo not sent?**
-The demo store has no Nilvera connection. Its Turkish documents were generated for a fictitious Turkish seller and
-checked in the store. Without a connection the e-Fatura list cannot be checked, so they are all e-Arşiv invoices.
+**Are the documents in the demo sent?**
+Yes, to Nilvera's test system, so nothing is reported to GİB as a real invoice. The demo's Turkish documents were sent
+for Nilvera's shared test company: an e-Arşiv invoice to a private buyer, an e-Fatura to a company in GİB's e-Fatura
+list and a return invoice that refers to the GİB number of its original. Each shows the GİB number Nilvera assigned and
+the ETTN.
 
 **What is not included?**
-e-Arşiv internet-sale details (web address, payment and carrier data) and withholding (tevkifat) codes. The GİB number
-uses the Magento invoice number, which does not restart every year.
+Withholding (tevkifat) codes are not written yet. The module does not create expense vouchers (e-Gider Pusulası): you
+record their number on the credit memo's document. Carrier VKNs are not shipped with the module, so you enter them once.
+The customer downloads the XML the store sent; the signed invoice with the GİB number is in the Nilvera portal.
 
 **Does it work with Hyvä?**
 Yes. The customer account downloads have Hyvä templates. The checkout fields are part of the Luma checkout, which Hyvä

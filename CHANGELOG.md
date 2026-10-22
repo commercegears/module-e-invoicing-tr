@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.3.1 (2026-10-22)
+- Improvement: FAQ updated: the demo sends to Nilvera's test system; current limitations listed.
+
 ## 2.3.0 (2026-10-18)
 - New: internet sale details GİB requires: web address, payment type and date, carrier and shipment date.
 - New: settings for payment types per payment method and for carriers with their VKN.
